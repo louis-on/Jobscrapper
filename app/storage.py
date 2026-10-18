@@ -1,16 +1,20 @@
 """Stockage simple des offres dans SQLite."""
 
 import json
+import os
 import sqlite3
 from pathlib import Path
 from typing import Iterable, List
 
-DB_PATH = Path("data/jobs.db")
+
+def _db_path() -> Path:
+    return Path(os.getenv("JOBSCRAPER_DB_PATH", "data/jobs.db"))
 
 
 def _connect() -> sqlite3.Connection:
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
+    path = _db_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(path)
     conn.execute(
         "CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, source TEXT, data TEXT)"
     )
